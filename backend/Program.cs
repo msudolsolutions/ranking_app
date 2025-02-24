@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BoardGameDbContext>(options =>
     options.UseSqlite("Data Source=boardgames.db"));
+builder.Services.AddScoped<IBoardGameRepository, SQLiteBoardGameRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(options =>
