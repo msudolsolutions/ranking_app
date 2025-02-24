@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   fetchBoardGames,
   addBoardGame,
+  updateBoardGame,
   deleteBoardGame,
   BoardGame,
 } from "../services/boardGameService";
@@ -9,6 +10,7 @@ import {
 const BoardGameList: React.FC = () => {
   const [boardGames, setBoardGames] = useState<BoardGame[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
+  const [editGame, setEditGame] = useState<BoardGame | null>(null);
   const [newGame, setNewGame] = useState<BoardGame>({
     id: 0,
     name: "",
@@ -45,6 +47,17 @@ const BoardGameList: React.FC = () => {
     loadBoardGames();
   };
 
+  const handleUpdateClick = (game: BoardGame) => {
+    setEditGame({ ...game });
+  };
+
+  const handleUpdateConfirm = async () => {
+    if (!editGame) return;
+    await updateBoardGame(editGame);
+    setEditGame(null);
+    loadBoardGames();
+  };
+
   return (
     <div className="container mt-4">
       <h2 className="mb-3">Board Games</h2>
@@ -59,15 +72,56 @@ const BoardGameList: React.FC = () => {
             style={{ cursor: "pointer" }}
           >
             <div>
-              <h5 className="mb-1">{game.name}</h5>
-              <p className="mb-1">{game.description}</p>
+              {editGame && editGame.id === game.id ? (
+                <>
+                  <input
+                    type="text"
+                    className="form-control mb-2"
+                    value={editGame.name}
+                    onChange={(e) =>
+                      setEditGame({ ...editGame, name: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="form-control mb-2"
+                    value={editGame.description}
+                    onChange={(e) =>
+                      setEditGame({ ...editGame, description: e.target.value })
+                    }
+                  />
+                  <button
+                    className="btn btn-success btn-sm me-2"
+                    onClick={handleUpdateConfirm}
+                  >
+                    OK
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setEditGame(null)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h5 className="mb-1">{game.name}</h5>
+                  <p className="mb-1">{game.description}</p>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => handleUpdateClick(game)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteGame(game.id)}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={() => handleDeleteGame(game.id)}
-            >
-              Delete
-            </button>
           </li>
         ))}
       </ul>
