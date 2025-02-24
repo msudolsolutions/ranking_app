@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   fetchBoardGames,
   addBoardGame,
-  updateBoardGame,
   deleteBoardGame,
   BoardGame,
 } from "../services/boardGameService";
 
 const BoardGameList: React.FC = () => {
   const [boardGames, setBoardGames] = useState<BoardGame[]>([]);
+  const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
   const [newGame, setNewGame] = useState<BoardGame>({
     id: 0,
     name: "",
@@ -46,34 +46,54 @@ const BoardGameList: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Board Games</h2>
-      <ul>
+    <div className="container mt-4">
+      <h2 className="mb-3">Board Games</h2>
+      <ul className="list-group mb-3">
         {boardGames.map((game) => (
-          <li key={game.id}>
-            <h3>{game.name}</h3>
-            <p>{game.description}</p>
-            <button onClick={() => handleDeleteGame(game.id)}>Delete</button>
+          <li
+            key={game.id}
+            className={`list-group-item d-flex justify-content-between align-items-center ${
+              selectedGameId === game.id ? "active" : ""
+            }`}
+            onClick={() => setSelectedGameId(game.id)}
+            style={{ cursor: "pointer" }}
+          >
+            <div>
+              <h5 className="mb-1">{game.name}</h5>
+              <p className="mb-1">{game.description}</p>
+            </div>
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => handleDeleteGame(game.id)}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
 
       <h3>Add New Game</h3>
-      <input
-        type="text"
-        placeholder="Name"
-        value={newGame.name}
-        onChange={(e) => setNewGame({ ...newGame, name: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Description"
-        value={newGame.description}
-        onChange={(e) =>
-          setNewGame({ ...newGame, description: e.target.value })
-        }
-      />
-      <button onClick={handleAddGame}>Add Game</button>
+      <div className="mb-3">
+        <input
+          type="text"
+          className="form-control mb-2"
+          placeholder="Name"
+          value={newGame.name}
+          onChange={(e) => setNewGame({ ...newGame, name: e.target.value })}
+        />
+        <input
+          type="text"
+          className="form-control mb-2"
+          placeholder="Description"
+          value={newGame.description}
+          onChange={(e) =>
+            setNewGame({ ...newGame, description: e.target.value })
+          }
+        />
+        <button className="btn btn-primary" onClick={handleAddGame}>
+          Add Game
+        </button>
+      </div>
     </div>
   );
 };
