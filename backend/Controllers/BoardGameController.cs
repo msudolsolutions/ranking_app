@@ -24,7 +24,7 @@ namespace RankingApp.Controllers
             newBoardGame.Id = BoardGames.Count > 0 ? BoardGames.Max(g => g.Id) + 1 : 1;
             BoardGames.Add(newBoardGame);
             SaveGamesToJson(BoardGames);
-            return Ok();
+            return CreatedAtAction(nameof(Read), new { boardGameId = newBoardGame.Id }, newBoardGame);
         }
 
         [HttpGet("{boardGameId}")]
